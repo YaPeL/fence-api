@@ -4,13 +4,13 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_DB: school_billing
-      POSTGRES_USER: school_billing
-      POSTGRES_PASSWORD: school_billing
+      POSTGRES_DB: fence_api
+      POSTGRES_USER: fence_api
+      POSTGRES_PASSWORD: fence_api
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U school_billing -d school_billing"]
+      test: ["CMD-SHELL", "pg_isready -U fence_api -d fence_api"]
       interval: 3s
       timeout: 3s
       retries: 20
@@ -18,7 +18,7 @@ services:
   api:
     build: .
     environment:
-      DATABASE_URL: postgresql+asyncpg://school_billing:school_billing@db:5432/school_billing
+      DATABASE_URL: postgresql+asyncpg://fence_api:fence_api@db:5432/fence_api
       JWT_SECRET: change_me
       JWT_ALGORITHM: HS256
       ADMIN_USERNAME: admin

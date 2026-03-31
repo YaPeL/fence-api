@@ -1,0 +1,37 @@
+from __future__ import annotations
+
+import argparse
+import asyncio
+import subprocess
+
+from app.core.db.seed import seed_db
+from app.core.db.session import SessionLocal
+
+
+def db_upgrade() -> None:
+    subprocess.run(["alembic", "-c", "alembic.ini", "upgrade", "head"], check=True)
+
+
+def db_revision() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--message", required=True)
+    args = parser.parse_args()
+
+    subprocess.run(
+        ["alembic", "-c", "alembic.ini", "revision", "--autogenerate", "-m", args.message],
+        check=True,
+    )
+
+
+def db_seed() -> None:
+    asyncio.run(_db_seed_async())
+
+
+async def _db_seed_async() -> None:
+    async with SessionLocal() as session:
+        try:
+            await seed_db(session)
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise

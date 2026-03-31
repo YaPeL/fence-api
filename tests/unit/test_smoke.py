@@ -1,6 +1,6 @@
 import pytest
 
-from app.api.health import health
+from app.api import health
 from app.main import app
 
 
@@ -13,6 +13,6 @@ async def test_health_ok() -> None:
 @pytest.mark.smoke
 def test_fastapi_skeleton_wired() -> None:
     paths = {route.path for route in app.routes}
-    assert app.title == "school-billing"
+    assert app.title == "fence-api"
     assert "/health" in paths
-    assert "/auth/login" in paths
+
