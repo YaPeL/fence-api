@@ -1,0 +1,38 @@
+from datetime import date, datetime
+from decimal import Decimal
+from uuid import UUID
+
+from app.domain.enums import InvoiceStatus
+from app.schemas.base import ReadSchemaModel, SchemaModel
+from app.schemas.types import PositiveAmount
+
+
+class InvoiceCreate(SchemaModel):
+    student_id: UUID
+    total_amount: PositiveAmount
+    due_date: date
+    description: str | None = None
+
+
+class InvoiceUpdate(SchemaModel):
+    student_id: UUID | None = None
+    total_amount: PositiveAmount | None = None
+    due_date: date | None = None
+    description: str | None = None
+    issued_at: datetime | None = None
+
+
+class InvoiceRead(ReadSchemaModel):
+    id: UUID
+    student_id: UUID
+    total_amount: Decimal
+    status: InvoiceStatus
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    issued_at: datetime
+    due_date: date
+    description: str | None = None
+    payments_total: Decimal = Decimal("0.00")
+    refunds_total: Decimal = Decimal("0.00")
+    paid_total: Decimal = Decimal("0.00")
+    balance_due: Decimal = Decimal("0.00")
