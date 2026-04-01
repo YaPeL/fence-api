@@ -42,7 +42,6 @@ addopts = "-q"
 [tool.poetry.scripts]
 db-upgrade = "app.core.db.cli:db_upgrade"
 db-revision = "app.core.db.cli:db_revision"
-db-seed = "app.core.db.cli:db_seed"
 
 [tool.ruff]
 line-length = 120
@@ -60,9 +59,6 @@ disallow_untyped_defs = true
 allow_untyped_decorators = true
 warn_unused_ignores = true
 show_error_codes = true
-exclude = [
-  "^tests/"
-]
 
 [[tool.mypy.overrides]]
 module = ["uuid_extensions"]

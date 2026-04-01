@@ -5,8 +5,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import register_exception_handlers
-from app.api import router as health_router
+from app.api import register_exception_handlers, router
 from app.core.logging import configure_logging
 from app.core.observability import request_logging_middleware
 from app.core.settings import settings
@@ -27,7 +26,6 @@ app.add_middleware(
     allow_headers=["Authorization", "content-type", "Accept"],
 )
 app.middleware("http")(request_logging_middleware)
-app.include_router(health_router, tags=["health"])
+app.include_router(router)
 
 register_exception_handlers(app)
-

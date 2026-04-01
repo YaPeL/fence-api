@@ -19,9 +19,7 @@ TODO: add coverage badge once integration coverage reporting is added.
    - `docker compose up -d db`
 3. Apply migrations:
    - `poetry run db-upgrade`
-4. Seed demo data:
-   - `poetry run db-seed`
-5. Run the API:
+4. Run the API:
    - `poetry run uvicorn app.main:app --reload`
    
 Extra generate migrations:
