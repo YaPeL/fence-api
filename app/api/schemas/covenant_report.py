@@ -3,6 +3,7 @@ from __future__ import annotations
 from decimal import ROUND_HALF_UP, Decimal
 
 from app.api.schemas.common import SchemaModel
+from app.api.schemas.publication import PublicationSchema
 from app.domain.models import CovenantReport, CovenantStatus, ExcludedAsset
 
 
@@ -28,9 +29,13 @@ class CovenantReportResponseSchema(SchemaModel):
     summary: CovenantReportSummarySchema
     included_assets: list[str]
     excluded_assets: list[ExcludedAssetSchema]
+    publication: PublicationSchema
 
     @classmethod
     def from_domain(cls, report: CovenantReport) -> CovenantReportResponseSchema:
+        if report.publication is None:
+            msg = "publication metadata is required to build API response"
+            raise ValueError(msg)
         formatted_rate = report.effective_rate_percentage.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         return cls(
             facility=report.facility,
@@ -43,4 +48,5 @@ class CovenantReportResponseSchema(SchemaModel):
             ),
             included_assets=report.included_assets,
             excluded_assets=[ExcludedAssetSchema.from_domain(item) for item in report.excluded_assets],
+            publication=PublicationSchema.from_domain(report.publication),
         )

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -14,7 +14,7 @@ from app.application.use_cases import (
 )
 from app.core.normalizers.base import to_decimal
 from app.core.normalizers.payearly_normalizer import normalize_payearly_assets
-from app.domain.models import CovenantStatus
+from app.domain.models import CovenantReportPublication, CovenantStatus, PublishCovenantReportCommand
 from app.main import app
 
 
@@ -48,7 +48,34 @@ def test_educa_happy_path_service() -> None:
 
 @pytest.mark.smoke
 @pytest.mark.anyio
-async def test_payearly_happy_path_route_status_case_insensitive() -> None:
+async def test_payearly_happy_path_route_status_case_insensitive(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from app.api.routes import payearly as payearly_route
+
+    class _DummySessionContext:
+        async def __aenter__(self) -> object:
+            return object()
+
+        async def __aexit__(self, exc_type: object, exc: object, tb: object) -> None:
+            return None
+
+    class _FakePublisher:
+        def __init__(self, _session: object) -> None:
+            pass
+
+        async def publish(self, command: PublishCovenantReportCommand) -> CovenantReportPublication:
+            return CovenantReportPublication(
+                id=1,
+                calculation_version="v1",
+                normalized_payload_hash=command.normalized_payload_hash,
+                published_at=datetime(2026, 1, 1, tzinfo=UTC),
+                was_already_published=False,
+            )
+
+    monkeypatch.setattr(payearly_route, "SessionLocal", _DummySessionContext)
+    monkeypatch.setattr(payearly_route, "SqlAlchemyCovenantReportPublisher", _FakePublisher)
+
     payload: list[dict[str, Any]] = [
         {
             "external_id": "P-1",
@@ -380,7 +407,34 @@ def test_to_decimal_rejects_infinity() -> None:
 
 @pytest.mark.smoke
 @pytest.mark.anyio
-async def test_educa_route_non_finite_decimal_does_not_crash() -> None:
+async def test_educa_route_non_finite_decimal_does_not_crash(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from app.api.routes import educa as educa_route
+
+    class _DummySessionContext:
+        async def __aenter__(self) -> object:
+            return object()
+
+        async def __aexit__(self, exc_type: object, exc: object, tb: object) -> None:
+            return None
+
+    class _FakePublisher:
+        def __init__(self, _session: object) -> None:
+            pass
+
+        async def publish(self, command: PublishCovenantReportCommand) -> CovenantReportPublication:
+            return CovenantReportPublication(
+                id=2,
+                calculation_version="v1",
+                normalized_payload_hash=command.normalized_payload_hash,
+                published_at=datetime(2026, 1, 1, tzinfo=UTC),
+                was_already_published=False,
+            )
+
+    monkeypatch.setattr(educa_route, "SessionLocal", _DummySessionContext)
+    monkeypatch.setattr(educa_route, "SqlAlchemyCovenantReportPublisher", _FakePublisher)
+
     payload: list[dict[str, Any]] = [
         {
             "external_id": "E-INF",
