@@ -6,10 +6,10 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-import app.models  # noqa: F401
+import app.core.db.models  # noqa: F401
 from alembic import context
-from app.core.settings import settings
 from app.core.db.base import Base
+from app.core.settings import settings
 
 config = context.config
 

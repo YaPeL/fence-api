@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "school-billing-api"
+name = "fence-api"
 version = "0.1.0"
-description = "Backend challenge: Schools, Students, Invoices, Payments"
+description = "Backend challenge"
 authors = ["Federico Apelhanz"]
 readme = "README.md"
 packages = [{ include = "app" }]
@@ -40,9 +40,8 @@ markers = [
 addopts = "-q"
 
 [tool.poetry.scripts]
-db-upgrade = "app.db.cli:db_upgrade"
-db-revision = "app.db.cli:db_revision"
-db-seed = "app.db.cli:db_seed"
+db-upgrade = "app.core.db.cli:db_upgrade"
+db-revision = "app.core.db.cli:db_revision"
 
 [tool.ruff]
 line-length = 120
@@ -60,9 +59,6 @@ disallow_untyped_defs = true
 allow_untyped_decorators = true
 warn_unused_ignores = true
 show_error_codes = true
-exclude = [
-  "^tests/"
-]
 
 [[tool.mypy.overrides]]
 module = ["uuid_extensions"]
