@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 
+from app.domain.models.publication import CovenantReportPublication
+
 
 class CovenantStatus(StrEnum):
     COMPLIANT = "COMPLIANT"
@@ -31,3 +33,4 @@ class CovenantReport:
     summary: CovenantReportSummary
     included_assets: list[str]
     excluded_assets: list[ExcludedAsset]
+    publication: CovenantReportPublication | None = None
